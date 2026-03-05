@@ -6,7 +6,7 @@ export function HeroSection() {
           Learn to Use AI Critically
         </h1>
         <p className="text-lg text-guard-blue-600 mb-2">
-          Guided Understanding of AI for Responsible Design
+          Generative Universal Assistant for Resourceful Development
         </p>
         <p className="text-guard-blue-500 max-w-xl mx-auto leading-relaxed">
           Hands-on labs that teach educators to formulate effective prompts,

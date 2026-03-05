@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GUARD - Guided Understanding of AI for Responsible Design",
+  title: "GUARD - Generative Universal Assistant for Resourceful Development",
   description:
     "A learning environment that teaches educators to use AI tools critically and pedagogically through structured, hands-on experimentation.",
 };

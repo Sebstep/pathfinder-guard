@@ -1,7 +1,7 @@
   
 **GUARD**
 
-Guided Understanding of AI for Responsible Design
+Generative Universal Assistant for Resourceful Development
 
 **Product Requirements Document**
 
