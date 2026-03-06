@@ -1,11 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useChatStore } from '@/stores/chatStore';
-import { DEFAULT_MODEL, BYOK_MODELS } from '@/lib/constants';
+import { DEFAULT_MODEL, BYOK_MODELS, DEFAULT_BYOK_MODEL } from '@/lib/constants';
+
+const CUSTOM_SENTINEL = '__custom__';
+
+type ModelEntry = { name: string; prompt: string; completion: string };
+type ModelMap = Record<string, ModelEntry>;
+
+function formatCost(entry: ModelEntry): string {
+  const input = parseFloat(entry.prompt) * 1_000_000;
+  const output = parseFloat(entry.completion) * 1_000_000;
+  if (input === 0 && output === 0) return 'Free';
+  return `$${input.toFixed(2)} / $${output.toFixed(2)} per 1M`;
+}
+
+function optionLabel(label: string, modelId: string, models: ModelMap | null, loading: boolean): string {
+  if (loading || !models) return label;
+  const m = models[modelId];
+  if (!m) return label;
+  return `${label}  ·  ${formatCost(m)}`;
+}
 
 export default function SettingsPage() {
   const byokKey = useChatStore((s) => s.byokKey);
@@ -14,20 +33,95 @@ export default function SettingsPage() {
   const setModel = useChatStore((s) => s.setModel);
 
   const [keyInput, setKeyInput] = useState(byokKey ?? '');
-  const [saved, setSaved] = useState(false);
+  const [keySaved, setKeySaved] = useState(false);
 
-  const handleSave = () => {
+  // Pending model selection — not applied to the store until "Save Model" is clicked
+  const isInitiallyCustom = byokKey !== null && !BYOK_MODELS.some((m) => m.id === model);
+  const [isCustomMode, setIsCustomMode] = useState(() => isInitiallyCustom);
+  const [pendingModelId, setPendingModelId] = useState(model);
+  const [customInput, setCustomInput] = useState<string>(() => isInitiallyCustom ? model : '');
+  const [modelSaved, setModelSaved] = useState(false);
+
+  const [models, setModels] = useState<ModelMap | null>(null);
+  const [pricingLoading, setPricingLoading] = useState(true);
+
+  const dropdownValue = isCustomMode ? CUSTOM_SENTINEL : pendingModelId;
+
+  useEffect(() => {
+    async function fetchPricing() {
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/models');
+        const json = await res.json();
+        const map: ModelMap = {};
+        for (const entry of (json.data ?? []) as Array<{
+          id?: string;
+          name?: string;
+          pricing?: { prompt?: string; completion?: string };
+        }>) {
+          if (entry.id && entry.pricing) {
+            map[entry.id] = {
+              name: entry.name ?? entry.id,
+              prompt: entry.pricing.prompt ?? '0',
+              completion: entry.pricing.completion ?? '0',
+            };
+          }
+        }
+        setModels(map);
+      } catch {
+        setModels({});
+      } finally {
+        setPricingLoading(false);
+      }
+    }
+    fetchPricing();
+  }, []);
+
+  // Derived save-ability
+  const pendingEffectiveModel = isCustomMode ? customInput.trim() : pendingModelId;
+  const customInCatalogue = isCustomMode && !pricingLoading && !!models?.[customInput.trim()];
+  const hasChange = pendingEffectiveModel !== '' && pendingEffectiveModel !== model;
+  const canSaveModel = hasChange && (!isCustomMode || customInCatalogue);
+
+  const handleSaveKey = () => {
     const trimmed = keyInput.trim();
+    const resetModel = trimmed ? DEFAULT_BYOK_MODEL : DEFAULT_MODEL;
     setByokKey(trimmed || null);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setIsCustomMode(false);
+    setPendingModelId(resetModel);
+    setCustomInput('');
+    setKeySaved(true);
+    setTimeout(() => setKeySaved(false), 2000);
   };
 
-  const handleClear = () => {
+  const handleClearKey = () => {
     setKeyInput('');
     setByokKey(null);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setIsCustomMode(false);
+    setPendingModelId(DEFAULT_MODEL);
+    setCustomInput('');
+    setKeySaved(true);
+    setTimeout(() => setKeySaved(false), 2000);
+  };
+
+  const handleModelDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (val === CUSTOM_SENTINEL) {
+      setIsCustomMode(true);
+    } else {
+      setIsCustomMode(false);
+      setCustomInput('');
+      setPendingModelId(val);
+    }
+  };
+
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomInput(e.target.value);
+  };
+
+  const handleSaveModel = () => {
+    setModel(pendingEffectiveModel);
+    setModelSaved(true);
+    setTimeout(() => setModelSaved(false), 2000);
   };
 
   return (
@@ -46,7 +140,18 @@ export default function SettingsPage() {
             OpenRouter API Key
           </h2>
           <p className="text-sm text-guard-blue-500 mb-4">
-            Provide your own <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="underline hover:text-guard-blue-700">OpenRouter API key</a> to choose from premium models instead of the default <strong>{DEFAULT_MODEL}</strong>. Your key is stored only in your browser&apos;s session storage and is never sent to our servers.
+            Provide your own{' '}
+            <a
+              href="https://openrouter.ai/keys"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-guard-blue-700"
+            >
+              OpenRouter API key
+            </a>{' '}
+            to choose from premium models instead of the default{' '}
+            <strong>{DEFAULT_MODEL}</strong>. Your key is stored only in your
+            browser&apos;s session storage and is never sent to our servers.
           </p>
 
           <div className="space-y-3">
@@ -68,15 +173,15 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Button onClick={handleSave} size="sm">
+              <Button onClick={handleSaveKey} size="sm">
                 Save Key
               </Button>
               {byokKey && (
-                <Button onClick={handleClear} variant="ghost" size="sm">
+                <Button onClick={handleClearKey} variant="ghost" size="sm">
                   Clear Key
                 </Button>
               )}
-              {saved && (
+              {keySaved && (
                 <span className="text-sm text-guard-success">Saved!</span>
               )}
             </div>
@@ -90,32 +195,73 @@ export default function SettingsPage() {
               >
                 Model
               </label>
+
               <select
                 id="model-select"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
+                value={dropdownValue}
+                onChange={handleModelDropdownChange}
                 className="w-full rounded-lg border border-guard-border bg-white px-3 py-2 text-sm text-guard-blue-900 focus:outline-none focus:ring-2 focus:ring-guard-accent focus:border-transparent"
               >
                 {BYOK_MODELS.map((m) => (
                   <option key={m.id} value={m.id}>
-                    {m.label}
+                    {optionLabel(m.label, m.id, models, pricingLoading)}
                   </option>
                 ))}
+                <option value={CUSTOM_SENTINEL}>
+                  I want to choose my own OpenRouter model endpoint…
+                </option>
               </select>
+
+              {isCustomMode && (
+                <div className="mt-2">
+                  <input
+                    id="custom-model-input"
+                    type="text"
+                    value={customInput}
+                    onChange={handleCustomInputChange}
+                    placeholder="e.g. mistralai/mistral-7b-instruct"
+                    className="w-full rounded-lg border border-guard-border bg-white px-3 py-2 text-sm text-guard-blue-900 placeholder:text-guard-blue-300 focus:outline-none focus:ring-2 focus:ring-guard-accent focus:border-transparent"
+                  />
+                  <p className="mt-1 text-xs text-guard-blue-400">
+                    Enter any model ID from{' '}
+                    <a
+                      href="https://openrouter.ai/models"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-guard-blue-600"
+                    >
+                      openrouter.ai/models
+                    </a>
+                  </p>
+                  {(() => {
+                    const trimmed = customInput.trim();
+                    if (!trimmed || pricingLoading) return null;
+                    const entry = models?.[trimmed];
+                    if (!entry) return (
+                      <p className="mt-2 text-xs text-guard-blue-400 italic">
+                        Model not found in OpenRouter catalogue
+                      </p>
+                    );
+                    return (
+                      <div className="mt-2">
+                        <p className="text-sm font-medium text-guard-blue-800">{entry.name}</p>
+                        <p className="text-xs text-guard-blue-500">{formatCost(entry)}</p>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              <div className="mt-3 flex items-center gap-3">
+                <Button onClick={handleSaveModel} size="sm" disabled={!canSaveModel}>
+                  Save Model
+                </Button>
+                {modelSaved && (
+                  <span className="text-sm text-guard-success">Saved!</span>
+                )}
+              </div>
             </div>
           )}
-
-          <div className="mt-6 pt-4 border-t border-guard-border">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-guard-blue-500">Active model:</span>
-              <span className="font-medium text-guard-blue-800">{model}</span>
-              {byokKey && (
-                <span className="inline-flex items-center rounded-full bg-guard-accent-light px-2 py-0.5 text-xs font-medium text-guard-accent">
-                  BYOK
-                </span>
-              )}
-            </div>
-          </div>
         </Card>
       </main>
     </div>

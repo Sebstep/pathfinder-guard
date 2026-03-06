@@ -18,12 +18,14 @@ export const PHASE_DESCRIPTIONS: Record<Phase, string> = {
 
 export const DEFAULT_MODEL = 'arcee-ai/trinity-large-preview:free';
 export const BYOK_MODELS = [
-  { id: 'arcee-ai/trinity-large-preview:free', label: 'Trinity Large Preview (Arcee AI)'},
+  { id: 'arcee-ai/trinity-large-preview:free', label: 'Trinity Large Preview (Arcee AI)' },
+  { id: 'mistralai/mistral-small-3.2-24b-instruct', label: 'Mistral Small 3.2 24B' },
+  { id: 'minimax/minimax-m2.5', label: 'MiniMax M2.5' },
   { id: 'openai/gpt-5.4', label: 'GPT-5.4 (OpenAI)' },
   { id: 'anthropic/claude-opus-4.6', label: 'Claude Opus 4.6 (Anthropic)' },
   { id: 'anthropic/claude-sonnet-4.6', label: 'Claude Sonnet 4.6 (Anthropic)' },
   { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash (Google)' },
-  { id: 'meta-llama/llama-4-maverick', label: 'Llama 4 Maverick (Meta)'},
+  { id: 'meta-llama/llama-4-maverick', label: 'Llama 4 Maverick (Meta)' },
 ];
 export const DEFAULT_BYOK_MODEL = BYOK_MODELS[0].id;
 
