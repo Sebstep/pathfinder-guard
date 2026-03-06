@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { messages, model = 'gpt-5-nano', apiKey } = await request.json();
+    const { messages, model = 'arcee-ai/trinity-large-preview:free', apiKey } = await request.json();
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
@@ -12,15 +12,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const key = apiKey || process.env.OPENAI_API_KEY;
+    const key = apiKey || process.env.OPENROUTER_API_KEY;
     if (!key) {
       return NextResponse.json(
-        { error: 'No API key configured. Set OPENAI_API_KEY or provide a BYOK key.' },
+        { error: 'No API key configured. Set OPENROUTER_API_KEY or provide a BYOK key.' },
         { status: 500 }
       );
     }
 
-    const openai = new OpenAI({ apiKey: key });
+    const openai = new OpenAI({
+      apiKey: key,
+      baseURL: 'https://openrouter.ai/api/v1',
+    });
 
     const stream = await openai.chat.completions.create({
       model,

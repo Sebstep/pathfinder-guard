@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { ChatMessage } from '@/lib/types';
-import { DEFAULT_MODEL, BYOK_MODEL } from '@/lib/constants';
+import { DEFAULT_MODEL, DEFAULT_BYOK_MODEL } from '@/lib/constants';
 
 interface ChatStore {
   messages: ChatMessage[];
@@ -97,7 +97,7 @@ export const useChatStore = create<ChatStore>()(
   setByokKey: (key) => {
     set({
       byokKey: key,
-      model: key ? BYOK_MODEL : DEFAULT_MODEL,
+      model: key ? DEFAULT_BYOK_MODEL : DEFAULT_MODEL,
     });
   },
 

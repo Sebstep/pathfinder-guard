@@ -16,7 +16,15 @@ export const PHASE_DESCRIPTIONS: Record<Phase, string> = {
   evaluate: 'Critically evaluate the AI response',
 };
 
-export const DEFAULT_MODEL = 'gpt-5-nano';
-export const BYOK_MODEL = 'gpt-5.2';
+export const DEFAULT_MODEL = 'arcee-ai/trinity-large-preview:free';
+export const BYOK_MODELS = [
+  { id: 'arcee-ai/trinity-large-preview:free', label: 'Trinity Large Preview (Arcee AI)'},
+  { id: 'openai/gpt-5.4', label: 'GPT-5.4 (OpenAI)' },
+  { id: 'anthropic/claude-opus-4.6', label: 'Claude Opus 4.6 (Anthropic)' },
+  { id: 'anthropic/claude-sonnet-4.6', label: 'Claude Sonnet 4.6 (Anthropic)' },
+  { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash (Google)' },
+  { id: 'meta-llama/llama-4-maverick', label: 'Llama 4 Maverick (Meta)'},
+];
+export const DEFAULT_BYOK_MODEL = BYOK_MODELS[0].id;
 
 export const MAX_ITERATIONS = 3;

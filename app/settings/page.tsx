@@ -5,12 +5,13 @@ import { Header } from '@/components/layout/Header';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useChatStore } from '@/stores/chatStore';
-import { DEFAULT_MODEL, BYOK_MODEL } from '@/lib/constants';
+import { DEFAULT_MODEL, BYOK_MODELS } from '@/lib/constants';
 
 export default function SettingsPage() {
   const byokKey = useChatStore((s) => s.byokKey);
   const model = useChatStore((s) => s.model);
   const setByokKey = useChatStore((s) => s.setByokKey);
+  const setModel = useChatStore((s) => s.setModel);
 
   const [keyInput, setKeyInput] = useState(byokKey ?? '');
   const [saved, setSaved] = useState(false);
@@ -42,13 +43,10 @@ export default function SettingsPage() {
 
         <Card>
           <h2 className="text-lg font-medium text-guard-blue-900 mb-1">
-            OpenAI API Key
+            OpenRouter API Key
           </h2>
           <p className="text-sm text-guard-blue-500 mb-4">
-            Provide your own OpenAI API key to use <strong>{BYOK_MODEL}</strong>{' '}
-            instead of the default <strong>{DEFAULT_MODEL}</strong>. Your key is
-            stored only in your browser&apos;s session storage and is never sent
-            to our servers.
+            Provide your own <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="underline hover:text-guard-blue-700">OpenRouter API key</a> to choose from premium models instead of the default <strong>{DEFAULT_MODEL}</strong>. Your key is stored only in your browser&apos;s session storage and is never sent to our servers.
           </p>
 
           <div className="space-y-3">
@@ -64,7 +62,7 @@ export default function SettingsPage() {
                 type="password"
                 value={keyInput}
                 onChange={(e) => setKeyInput(e.target.value)}
-                placeholder="sk-..."
+                placeholder="sk-or-..."
                 className="w-full rounded-lg border border-guard-border bg-white px-3 py-2 text-sm text-guard-blue-900 placeholder:text-guard-blue-300 focus:outline-none focus:ring-2 focus:ring-guard-accent focus:border-transparent"
               />
             </div>
@@ -83,6 +81,29 @@ export default function SettingsPage() {
               )}
             </div>
           </div>
+
+          {byokKey && (
+            <div className="mt-5">
+              <label
+                htmlFor="model-select"
+                className="block text-sm font-medium text-guard-blue-700 mb-1.5"
+              >
+                Model
+              </label>
+              <select
+                id="model-select"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="w-full rounded-lg border border-guard-border bg-white px-3 py-2 text-sm text-guard-blue-900 focus:outline-none focus:ring-2 focus:ring-guard-accent focus:border-transparent"
+              >
+                {BYOK_MODELS.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="mt-6 pt-4 border-t border-guard-border">
             <div className="flex items-center gap-2 text-sm">
