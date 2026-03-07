@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { LabCard } from "@/components/landing/LabCard";
+import { HowItWorks } from "@/components/landing/HowItWorks";
 import { labMetas } from "@/content/labs";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
             ))}
           </div>
         </section>
+        <HowItWorks />
       </main>
       <Footer />
     </div>
