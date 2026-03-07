@@ -26,6 +26,15 @@ export const assessmentCreationLab: LabConfig = {
         {
           id: 'q1',
           question:
+            'What topic or unit is this assessment for?',
+          placeholder:
+            'e.g., Photosynthesis, The Civil Rights Movement, Linear Equations...',
+          templateSlot: 'TOPIC',
+          inputType: 'text',
+        },
+        {
+          id: 'q2',
+          question:
             'What specific knowledge or skill should this assessment measure? Try to be precise: what would a successful student demonstrate?',
           placeholder:
             'e.g., Students should be able to apply Newton\'s second law to novel scenarios...',
@@ -33,7 +42,7 @@ export const assessmentCreationLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q2',
+          id: 'q3',
           question:
             'What level of cognitive demand are you targeting — recall of facts, application to new scenarios, analysis, or evaluation?',
           placeholder:
@@ -42,7 +51,7 @@ export const assessmentCreationLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q3',
+          id: 'q4',
           question:
             'What format fits this assessment purpose: multiple choice, short answer, open-ended response, performance task, or a mix?',
           placeholder:
@@ -51,7 +60,7 @@ export const assessmentCreationLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q4',
+          id: 'q5',
           question:
             'What would a common misconception or error look like on this assessment? Knowing this helps ensure the assessment actually catches misunderstanding.',
           placeholder:
@@ -60,7 +69,16 @@ export const assessmentCreationLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q5',
+          id: 'q6',
+          question:
+            'How many questions should the assessment include?',
+          placeholder:
+            'e.g., 5, 10, 15...',
+          templateSlot: 'NUMBER',
+          inputType: 'text',
+        },
+        {
+          id: 'q7',
           question:
             'Is this formative (to guide learning) or summative (to measure achievement)? How does that affect what you need?',
           placeholder:
@@ -71,17 +89,12 @@ export const assessmentCreationLab: LabConfig = {
       ],
       promptTemplate: {
         templateText:
-          'I need to create a [ASSESSMENT_PURPOSE] assessment for [STUDENT_LEVEL] students on the topic of [TOPIC].\n\nThe assessment should measure students\' ability to [SPECIFIC_SKILL].\n\nI want the questions to require [COGNITIVE_LEVEL] thinking.\n\nA common student misconception in this area is [MISCONCEPTION].\n\nPlease create [NUMBER] [FORMAT] questions. For each question, include the correct answer and a brief explanation of what the question tests.',
+          'I need to create a [ASSESSMENT_PURPOSE] assessment on the topic of [TOPIC].\n\nThe assessment should measure students\' ability to [SPECIFIC_SKILL].\n\nI want the questions to require [COGNITIVE_LEVEL] thinking.\n\nA common student misconception in this area is [MISCONCEPTION].\n\nPlease create [NUMBER] [FORMAT] questions. For each question, include the correct answer and a brief explanation of what the question tests.',
         slots: [
           {
             id: 'ASSESSMENT_PURPOSE',
             label: 'Purpose (Formative/Summative)',
             defaultText: 'formative or summative',
-          },
-          {
-            id: 'STUDENT_LEVEL',
-            label: 'Student Level',
-            defaultText: 'student level',
           },
           { id: 'TOPIC', label: 'Topic', defaultText: 'the topic' },
           {

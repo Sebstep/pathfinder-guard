@@ -26,6 +26,15 @@ export const activityPlanningLab: LabConfig = {
         {
           id: 'q1',
           question:
+            'What subject or discipline do you teach?',
+          placeholder:
+            'e.g., Biology, World History, Introduction to Psychology...',
+          templateSlot: 'ROLE_SUBJECT',
+          inputType: 'text',
+        },
+        {
+          id: 'q2',
+          question:
             'What specific topic or concept should this activity help students understand?',
           placeholder:
             'e.g., Photosynthesis, The French Revolution, Linear Algebra...',
@@ -33,7 +42,7 @@ export const activityPlanningLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q2',
+          id: 'q3',
           question:
             'What should students be able to do after completing this activity that they couldn\'t do before?',
           placeholder:
@@ -42,7 +51,7 @@ export const activityPlanningLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q3',
+          id: 'q4',
           question:
             'Who are your students? Consider their level, prior knowledge, and what typically challenges them with this material.',
           placeholder:
@@ -51,7 +60,7 @@ export const activityPlanningLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q4',
+          id: 'q5',
           question:
             'How much time do you have for this activity, and what constraints should the design respect (class size, available resources, physical space)?',
           placeholder:
@@ -60,7 +69,7 @@ export const activityPlanningLab: LabConfig = {
           inputType: 'textarea',
         },
         {
-          id: 'q5',
+          id: 'q6',
           question:
             'What kind of engagement are you hoping for — individual thinking, collaborative work, hands-on practice, discussion, or something else?',
           placeholder:
@@ -71,17 +80,12 @@ export const activityPlanningLab: LabConfig = {
       ],
       promptTemplate: {
         templateText:
-          'I am a [ROLE_SUBJECT] educator teaching [STUDENT_LEVEL] students. I need a class activity about [TOPIC] that helps students achieve this learning objective: [LEARNING_OBJECTIVE].\n\nMy students typically [STUDENT_CONTEXT].\n\nThe activity should fit within [TIME_CONSTRAINT] and work for [CLASS_SIZE] students. I\'m looking for an activity that emphasizes [ENGAGEMENT_TYPE].\n\nPlease include clear instructions, materials needed, and a brief explanation of how this activity supports the learning objective.',
+          'I am a [ROLE_SUBJECT] educator. I need a class activity about [TOPIC] that helps students achieve this learning objective: [LEARNING_OBJECTIVE].\n\nAbout my students: [STUDENT_CONTEXT].\n\nThe activity should fit within these constraints: [TIME_CONSTRAINT]. I\'m looking for an activity that emphasizes [ENGAGEMENT_TYPE].\n\nPlease include clear instructions, materials needed, and a brief explanation of how this activity supports the learning objective.',
         slots: [
           {
             id: 'ROLE_SUBJECT',
-            label: 'Role/Subject',
-            defaultText: 'your role and subject area',
-          },
-          {
-            id: 'STUDENT_LEVEL',
-            label: 'Student Level',
-            defaultText: 'student level',
+            label: 'Subject/Discipline',
+            defaultText: 'your subject or discipline',
           },
           { id: 'TOPIC', label: 'Topic', defaultText: 'the topic' },
           {
@@ -96,13 +100,8 @@ export const activityPlanningLab: LabConfig = {
           },
           {
             id: 'TIME_CONSTRAINT',
-            label: 'Time Constraint',
+            label: 'Constraints',
             defaultText: 'time and constraints',
-          },
-          {
-            id: 'CLASS_SIZE',
-            label: 'Class Size',
-            defaultText: 'class size',
           },
           {
             id: 'ENGAGEMENT_TYPE',
@@ -293,9 +292,9 @@ export const activityPlanningLab: LabConfig = {
         {
           id: 'q3',
           question:
-            'How would you explain this activity\'s purpose to a colleague — and does the AI\'s version support that explanation?',
+            'What is this activity\'s core purpose — the single most important thing it should accomplish?',
           placeholder:
-            'e.g., I would say this activity teaches students to think critically about X by...',
+            'e.g., Help students distinguish between correlation and causation through hands-on data analysis...',
           templateSlot: 'PURPOSE_EXPLANATION',
           inputType: 'textarea',
         },

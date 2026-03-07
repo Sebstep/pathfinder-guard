@@ -71,7 +71,7 @@ export const rubricDesignLab: LabConfig = {
       ],
       promptTemplate: {
         templateText:
-          'I need a [RUBRIC_TYPE] rubric for the following assignment: [ASSIGNMENT_DESCRIPTION].\n\nThe rubric should evaluate these key qualities: [CRITERIA_LIST].\n\nI want [NUMBER] performance levels: [LEVEL_NAMES].\n\nA typical "good but not great" submission looks like: [MIDDLE_DESCRIPTION].\n\nFor each criterion and level, provide specific, observable descriptors that a student could use to understand exactly what is expected.',
+          'I need a [RUBRIC_TYPE] rubric for the following assignment: [ASSIGNMENT_DESCRIPTION].\n\nThe rubric should evaluate these key qualities: [CRITERIA_LIST].\n\nI want these performance levels: [LEVEL_NAMES].\n\nA typical "good but not great" submission looks like: [MIDDLE_DESCRIPTION].\n\nFor each criterion and level, provide specific, observable descriptors that a student could use to understand exactly what is expected.',
         slots: [
           {
             id: 'RUBRIC_TYPE',
@@ -87,11 +87,6 @@ export const rubricDesignLab: LabConfig = {
             id: 'CRITERIA_LIST',
             label: 'Evaluation Criteria',
             defaultText: 'key evaluation criteria',
-          },
-          {
-            id: 'NUMBER',
-            label: 'Number of Levels',
-            defaultText: 'number of',
           },
           {
             id: 'LEVEL_NAMES',
