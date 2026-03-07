@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { CopyButton } from './CopyButton';
+import { MarkdownContent } from './MarkdownContent';
 import type { ChatMessage as ChatMessageType } from '@/lib/types';
 
 interface ChatMessageProps {
@@ -27,7 +28,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
               : 'bg-guard-blue-50 text-guard-blue-800 rounded-bl-md'
           )}
         >
-          <div className="whitespace-pre-wrap">{message.content}</div>
+          {isUser
+            ? <div className="whitespace-pre-wrap">{message.content}</div>
+            : <MarkdownContent content={message.content} />
+          }
           {message.isStreaming && (
             <span className="inline-block w-1.5 h-4 bg-guard-blue-400 animate-pulse ml-0.5 align-middle" />
           )}
