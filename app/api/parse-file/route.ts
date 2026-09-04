@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import 'pdf-parse/worker';
+import { PDFParse } from 'pdf-parse';
+import * as mammoth from 'mammoth';
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
@@ -29,15 +32,15 @@ export async function POST(request: Request) {
       text = await file.text();
     } else if (ext === 'pdf') {
       const buffer = Buffer.from(await file.arrayBuffer());
-      // Use the internal path to avoid pdf-parse's test runner code that crashes in Next.js
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require('pdf-parse/lib/pdf-parse');
-      const result = await pdfParse(buffer);
-      text = result.text;
+      const parser = new PDFParse({ data: buffer });
+      try {
+        const result = await parser.getText();
+        text = result.text;
+      } finally {
+        await parser.destroy();
+      }
     } else if (ext === 'docx') {
       const buffer = Buffer.from(await file.arrayBuffer());
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const mammoth = require('mammoth');
       const result = await mammoth.extractRawText({ buffer });
       text = result.value;
     } else {

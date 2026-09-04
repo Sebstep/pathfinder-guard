@@ -39,6 +39,8 @@ Each lab is broken into guided iterations. Users answer Socratic scaffolding que
 
 ## Local Development
 
+Requires Node.js 22.13 or newer.
+
 Install dependencies:
 
 ```bash
